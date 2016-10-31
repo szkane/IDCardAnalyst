@@ -12,6 +12,7 @@
 
 <!--Icons-->
 <script src="https://as.alipayobjects.com/g/datavis/g2/1.2.3/index.js"></script>
+<script src="https://as.alipayobjects.com/g/datavis/g-plugin-map/1.1.0/index.js"></script>
 <script src="js/lumino.glyphs.js"></script>
 
 <!--[if lt IE 9]>
@@ -57,7 +58,7 @@
 
 						   		<div class="form-group">
 									<label>身份证号,一行一个</label>
-									<textarea class="form-control" rows="3" id="id-num">严介辉 411402198104064534陶仲佟 321112199003137393廉树琪 230521199110235795柏奋赋 360830199410185410钮僚敏 33012719910506221X郝可文 340602199302102294许驹菘 654003197704135735奚奎汝 340822197706244739柏征聚 321204199401034096水言邦 152202198912187619石谱班 230710198310017896平菁雄 520603199011071694郎肖任 210213198111065279邹进如 320404197507253394闵邦余 421126198905245710高自鸣 45098119940426227X凌誉胜 370203198503237836滕庚志 341522198010038653卞里洪 420902198410212273王单羽 469028199103233378吴蓝风 32061219830222785X祁篱霆 130110198012018456胡准辰 420203198608123557熊进如 330781197709224517宗灵凡 321322198809167128姚山彤 620902198505141305韩涵易 410822197504054169贲秋珊 13020719941226368X梁友安 450109198101143362裘白容 530124199101013726雷念蕾 520323198207174569伏盼晴 230183199308156205成沛凝 150124199312207386路乐蓉 511002197607048701项惜玉 150522197507263169祁梦凡 371723198102195026茅念文 34032219910611596X应元冬 511623198011014702贝千柔 13028119911102382X邹问凝 211103198610259062廉采春 540237197710078824杨雁山 623001198310015082宗谷梦 131122198812208764黄映安 13112419760806938X李南霜 141123197907182708卞盼夏 140702197611022561翁迎彤 411024198103254746狄静槐 330703198705277668彭航沛 141126197808229899花恩妙 330303198210071236林通章 500120198406184694邓映冉 610528198709287891项希伙 370811199005221978米誉胜 53293119760502789X尹朝剑 410183198009052739郁铮友 530326199008203254王信品 511321198610134694管舒旺 460202199401274935褚冰蝶 654021198212254727伍思菱 230712199210022767刁巧兰 220582198807024783鲁凡雁 350722199102028168郑觅露 230302197705134249云山梅 520113197712274087顾醉易 230402198710281286施初蝶 43102819770114404X房醉柳 140928199412167622萧小之 150430197711054369龚冰蝶 429005198407271588王飞荷 231281198210235385夏以冬 610122198502096641姜天薇 441623198901043769娄傲南 350629198101115969陶恨真 610525197711119965汪易梦 530621198410142066穆语柳 640205199302143764禹夜雪 632802199104247566骆雨竹 210603198709064843钱半梅 430202198207124167米白萱 640422198206263849鲁丹彤 451102199302031886房凝安 130984198001118564屈宾梦 623001198509013850屈负浪 130202197610158038雷和革 230828197603257716吉宙国 33041119810324327X计召云 140424199201249019纪瑛昼 622901199001199810房贡策 110106199107172196蔡延秋 371428198505136536孟锋滕 420205197607119933元搏贤 430923198402135590周胤鸣 610527199201283978殷嘉文 440204197908217972任政航 430923198705252794王搏贤 130207198806046130</textarea>
+									<textarea class="form-control" rows="3" id="id-num"></textarea>
 									<br/>
 									 <button type="submit" class="btn btn-primary" id="btn-primary">开始分析</button>
 
@@ -105,11 +106,19 @@
 				<div class="panel panel-default">
 
 					<div class="panel-heading">
-						年龄分布
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">性别分布</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">星座分布</div>
 					</div>
 					<div class="panel-body">
-						<div class="canvas-wrapper">
-							<div id="TvTrend"></div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="canvas-wrapper">
+								<div id="genderPanel"></div>
+							</div>
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="canvas-wrapper">
+								<div id="constellationPanel"></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -122,199 +131,7 @@
 
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
-
-	<script>
-		var App = function () {
-			const _this = this;
-			this.init = function () {
-				// 地图
-				$.getJSON('js/mapdata.json', function(data) {
-					_this.mapData = data;
-				});
-				$.getJSON('js/prodata.json', function(data) {
-					_this.proData = data;
-				})
-			}
-		}
-		// 年龄
-		App.prototype.newAgePanel = function(ele, data) {
-			if (!!this.agePanel) {
-				this.agePanel.destroy();
-				delete this.agePanel;
-			}
-			var Stat = G2.Stat;
-			var chart = new G2.Chart({
-				id: $(ele)[0].id,
-				width: $(ele).width(),
-				height: 500,
-			});
-			chart.source(data);
-			//chart.axis('tem',{title: null,labels: null});
-			// area 支持的图形类型：'area','smooth','line','dotLine','smoothLine','dotSmoothLine'
-			chart.area().position('年龄*数量').color('类型').shape('area');
-			chart.render();
-			this.agePanel = chart;
-		}
-		// 地图
-		App.prototype.newMapPanel = function(ele, data) {
-			if (!!this.mapPanel) {
-				this.mapPanel.destroy();
-				delete this.mapPanel;
-			}
-			var Stat = G2.Stat;
-      var userData = [];
-      var features = this.mapData.features;
-      for(var i=0; i<features.length; i++) {
-        var name = features[i].properties.name;
-        userData.push({
-          "name": name,
-          "value": data[name] || 0,
-        });
-      }
-      console.log(userData);
-      var chart = new G2.Chart({
-        id: $(ele)[0].id,
-        width: 1000,
-        height: 500,
-        plotCfg: {
-          margin: [30, 180]
-        }
-      });
-      chart.source(userData);
-      chart.axis(false);
-      chart.polygon().position(Stat.map.region('name', this.mapData))
-        .color('value', '#F4EC91-#AF303C')
-        .style({
-        stroke: '#333',
-        lineWidth: 1
-      });
-      chart.point().position(Stat.map.center('name', this.mapData))
-        .label('name', {
-        offset: 0,
-        label: {
-          fill: '#000',
-          fontSize: 10
-        }
-      })
-        .size(0);
-      chart.render();
-      this.mapPanel = chart;
-		}
-		var myApp = new App();
-		myApp.init();
-		// ready
-		$(document).ready(function() {
-			var ageObjArr = [];
-			var areaObjPro = {};
-			$("#btn-primary").on('click', function() {
-				var arr = $('#id-num').val().replace(/[^0-9x\s]/g, '').replace(/^\s/, '').split(' ');
-				var ageObj = {};
-				var areaObj = {};
-				arr.map(function(UUserCard, idx) {
-					// 年龄
-					var myDate = new Date();
-					var month = myDate.getMonth() + 1;
-					var day = myDate.getDate();
-
-					var age = myDate.getFullYear() - UUserCard.substring(6, 10) - 1;
-					if (UUserCard.substring(10, 12) < month || UUserCard.substring(10, 12) == month && UUserCard.substring(12, 14) <= day) {
-						age++;
-					}
-					if (!ageObj[age]) {
-						ageObj[age] = 1;
-					} else {
-						ageObj[age]++;
-					}
-					// 地区
-					var tmpAreaPro = UUserCard.substring(0, 2);
-					if (!areaObj[tmpAreaPro]) {
-						areaObj[tmpAreaPro] = 1;
-					} else {
-						areaObj[tmpAreaPro]++;
-					}
-				})
-				// 年龄
-				for (key in ageObj) {
-					if (ageObj.hasOwnProperty(key)) {
-						ageObjArr.push({
-							"类型": "年龄",
-							"年龄": parseInt(key),
-							"数量": ageObj[key],
-						});
-					}
-				}
-				// 地区
-				for (key in areaObj) {
-					if (areaObj.hasOwnProperty(key)) {
-						areaObjPro[myApp.proData[key]] = areaObj[key];
-					}
-				}
-				console.log(ageObj, ageObjArr, areaObj, areaObjPro);
-				myApp.newAgePanel('#agePanel', ageObjArr);
-				myApp.newMapPanel('#mapPanel', areaObjPro);
-			})
-		})
-	</script>
-	<script>
-		// 趋势图数据
-		var data = [
-		{"日期":"6月1日","次数":500,"分类":"前置广告"},
-		{"日期":"6月2日","次数":520,"分类":"前置广告"},
-		{"日期":"6月3日","次数":500,"分类":"前置广告"},
-		{"日期":"6月4日","次数":364,"分类":"前置广告"},
-		{"日期":"6月5日","次数":522,"分类":"前置广告"},
-		{"日期":"6月6日","次数":454,"分类":"前置广告"},
-		{"日期":"6月7日","次数":523,"分类":"前置广告"},
-		{"日期":"6月8日","次数":536,"分类":"前置广告"},
-		{"日期":"6月9日","次数":332,"分类":"前置广告"},
-		{"日期":"6月10日","次数":484,"分类":"前置广告"},
-		{"日期":"6月11日","次数":393,"分类":"前置广告"},
-		{"日期":"6月12日","次数":439,"分类":"前置广告"},
-		{"日期":"6月13日","次数":421,"分类":"前置广告"},
-
-
-		{"日期":"6月1日","次数":200,"分类":"背景视频"},
-		{"日期":"6月2日","次数":202,"分类":"背景视频"},
-		{"日期":"6月3日","次数":150,"分类":"背景视频"},
-		{"日期":"6月4日","次数":136,"分类":"背景视频"},
-		{"日期":"6月5日","次数":182,"分类":"背景视频"},
-		{"日期":"6月6日","次数":145,"分类":"背景视频"},
-		{"日期":"6月7日","次数":252,"分类":"背景视频"},
-		{"日期":"6月8日","次数":153,"分类":"背景视频"},
-		{"日期":"6月9日","次数":233,"分类":"背景视频"},
-		{"日期":"6月10日","次数":188,"分类":"背景视频"},
-		{"日期":"6月11日","次数":139,"分类":"背景视频"},
-		{"日期":"6月12日","次数":143,"分类":"背景视频"},
-		{"日期":"6月13日","次数":202,"分类":"背景视频"},
-
-
-		{"日期":"6月1日","次数":100,"分类":"侧栏广告"},
-		{"日期":"6月2日","次数":20,"分类":"侧栏广告"},
-		{"日期":"6月3日","次数":15,"分类":"侧栏广告"},
-		{"日期":"6月4日","次数":64,"分类":"侧栏广告"},
-		{"日期":"6月5日","次数":22,"分类":"侧栏广告"},
-		{"日期":"6月6日","次数":54,"分类":"侧栏广告"},
-		{"日期":"6月7日","次数":23,"分类":"侧栏广告"},
-		{"日期":"6月8日","次数":36,"分类":"侧栏广告"},
-		{"日期":"6月9日","次数":32,"分类":"侧栏广告"},
-		{"日期":"6月10日","次数":84,"分类":"侧栏广告"},
-		{"日期":"6月11日","次数":93,"分类":"侧栏广告"},
-		{"日期":"6月12日","次数":39,"分类":"侧栏广告"},
-		{"日期":"6月13日","次数":21,"分类":"侧栏广告"},
-
-		];
-		var Stat = G2.Stat;
-		var chart = new G2.Chart({
-		id: 'TvTrend',
-		width: $("#TvTrend").width(),
-		height: 500
-		});
-		chart.source(data);
-		//chart.axis('tem',{title: null,labels: null});
-		// area 支持的图形类型：'area','smooth','line','dotLine','smoothLine','dotSmoothLine'
-		chart.area().position('日期*次数').color('分类').shape('area');
-		chart.render();
-	</script>
+	<script src='js/analyst.js'></script>
 </body>
 
 </html>
