@@ -12,6 +12,7 @@
 
 <!--Icons-->
 <script src="https://as.alipayobjects.com/g/datavis/g2/1.2.3/index.js"></script>
+<script src="https://as.alipayobjects.com/g/datavis/g-plugin-map/1.1.0/index.js"></script>
 <script src="js/lumino.glyphs.js"></script>
 
 <!--[if lt IE 9]>
@@ -22,7 +23,7 @@
 </head>
 
 <body>
-	
+
 	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -36,125 +37,101 @@
 				<ul class="user-menu">
 					<li class="dropdown pull-right">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> Copyright By Kane </a>
-						
+
 					</li>
 				</ul>
 			</div>
-							
+
 		</div><!-- /.container-fluid -->
 	</nav>
-	
 
-		
-	
-	<div class="col-sm-12 col-lg-12 main">	
+
+
+
+	<div class="col-sm-12 col-lg-12 main">
 
 		<div class="row">
-			<div class="col-lg-12">				
+			<div class="col-lg-12">
 				<div class="panel panel-default">
 					<div class="panel-heading">请输入身份证数据</div>
 						<div class="panel-body">
 
 						   		<div class="form-group">
 									<label>身份证号,一行一个</label>
-									<textarea class="form-control" rows="3"></textarea>
+									<textarea class="form-control" rows="3" id="id-num"></textarea>
 									<br/>
-									 <button type="submit" class="btn btn-primary">开始分析</button>
+									 <button type="submit" class="btn btn-primary" id="btn-primary">开始分析</button>
 
 								</div>
 						</div>
 				</div>
 			</div>
 		</div>
-		
-		
+
+
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="panel panel-default">
 
 					<div class="panel-heading">
-						广告播放次数趋势
+						年龄分布
 					</div>
 					<div class="panel-body">
 						<div class="canvas-wrapper">
-							<div id="TvTrend"></div>
+							<div id="agePanel"></div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div><!--/.row-->
-	
-								
-		
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+
+					<div class="panel-heading">
+						地区分布
+					</div>
+					<div class="panel-body">
+						<div class="canvas-wrapper">
+							<div id="mapPanel"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+
+					<div class="panel-heading">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">性别分布</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">星座分布</div>
+					</div>
+					<div class="panel-body">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="canvas-wrapper">
+								<div id="genderPanel"></div>
+							</div>
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="canvas-wrapper">
+								<div id="constellationPanel"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+
+
 	</div>	<!--/.main-->
+
 
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
-
-	<script>
-		
-		
-	</script>
-	<script>
-		// 趋势图数据
-		var data = [
-		{"日期":"6月1日","次数":500,"分类":"前置广告"},
-		{"日期":"6月2日","次数":520,"分类":"前置广告"},
-		{"日期":"6月3日","次数":500,"分类":"前置广告"},
-		{"日期":"6月4日","次数":364,"分类":"前置广告"},
-		{"日期":"6月5日","次数":522,"分类":"前置广告"},
-		{"日期":"6月6日","次数":454,"分类":"前置广告"},
-		{"日期":"6月7日","次数":523,"分类":"前置广告"},
-		{"日期":"6月8日","次数":536,"分类":"前置广告"},
-		{"日期":"6月9日","次数":332,"分类":"前置广告"},
-		{"日期":"6月10日","次数":484,"分类":"前置广告"},
-		{"日期":"6月11日","次数":393,"分类":"前置广告"},
-		{"日期":"6月12日","次数":439,"分类":"前置广告"},
-		{"日期":"6月13日","次数":421,"分类":"前置广告"},
-
-
-		{"日期":"6月1日","次数":200,"分类":"背景视频"},
-		{"日期":"6月2日","次数":202,"分类":"背景视频"},
-		{"日期":"6月3日","次数":150,"分类":"背景视频"},
-		{"日期":"6月4日","次数":136,"分类":"背景视频"},
-		{"日期":"6月5日","次数":182,"分类":"背景视频"},
-		{"日期":"6月6日","次数":145,"分类":"背景视频"},
-		{"日期":"6月7日","次数":252,"分类":"背景视频"},
-		{"日期":"6月8日","次数":153,"分类":"背景视频"},
-		{"日期":"6月9日","次数":233,"分类":"背景视频"},
-		{"日期":"6月10日","次数":188,"分类":"背景视频"},
-		{"日期":"6月11日","次数":139,"分类":"背景视频"},
-		{"日期":"6月12日","次数":143,"分类":"背景视频"},
-		{"日期":"6月13日","次数":202,"分类":"背景视频"},
-
-
-		{"日期":"6月1日","次数":100,"分类":"侧栏广告"},
-		{"日期":"6月2日","次数":20,"分类":"侧栏广告"},
-		{"日期":"6月3日","次数":15,"分类":"侧栏广告"},
-		{"日期":"6月4日","次数":64,"分类":"侧栏广告"},
-		{"日期":"6月5日","次数":22,"分类":"侧栏广告"},
-		{"日期":"6月6日","次数":54,"分类":"侧栏广告"},
-		{"日期":"6月7日","次数":23,"分类":"侧栏广告"},
-		{"日期":"6月8日","次数":36,"分类":"侧栏广告"},
-		{"日期":"6月9日","次数":32,"分类":"侧栏广告"},
-		{"日期":"6月10日","次数":84,"分类":"侧栏广告"},
-		{"日期":"6月11日","次数":93,"分类":"侧栏广告"},
-		{"日期":"6月12日","次数":39,"分类":"侧栏广告"},
-		{"日期":"6月13日","次数":21,"分类":"侧栏广告"},
-		
-		];
-		var Stat = G2.Stat;
-		var chart = new G2.Chart({
-		id: 'TvTrend',
-		width: $("#TvTrend").width(),
-		height: 500
-		});
-		chart.source(data);
-		//chart.axis('tem',{title: null,labels: null});
-		// area 支持的图形类型：'area','smooth','line','dotLine','smoothLine','dotSmoothLine'
-		chart.area().position('日期*次数').color('分类').shape('area');
-		chart.render();
-	</script>	
+	<script src='js/analyst.js'></script>
 </body>
 
 </html>
